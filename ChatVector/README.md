@@ -1,10 +1,6 @@
-# Chat Vector: A Simple Approach to Equip LLMs with Instruction Following and Model Alignment in New Languages
+# Chat Vector를 통한 OpenBioLLM-Korean (Preview) 생성
 
-<p align="center">
-    <img src="https://img.shields.io/badge/Code_License-MIT-blue">
-</p>
-
-This repository contains the official code for the ACL 2024 paper: [Chat Vector: A Simple Approach to Equip LLMs with Instruction Following and Model Alignment in New Languages](https://arxiv.org/pdf/2310.04799).
+[Chat Vector: A Simple Approach to Equip LLMs with Instruction Following and Model Alignment in New Languages](https://arxiv.org/pdf/2310.04799).
 
 ## Requirements
 
@@ -12,108 +8,57 @@ This repository contains the official code for the ACL 2024 paper: [Chat Vector:
 * transformers
 * fire
 
-To install the required packages, run the following commands:
+아래와 같은 스크립트를 통해 필요한 라이브러리를 설치
 
 ```bash
-CUDA=cu118 # change to your CUDA version
-pip install torch --index-url https://download.pytorch.org/whl/$CUDA
-
-# If you do not need to use `chat.py`, you can install the no-cuda torch version.
-pip install torch
-
+pip install torch --index-url https://download.pytorch.org/whl/cu118 # change to your CUDA version
 pip install transformers fire
 ```
 
 ## Usage
 
-### Extracting the Chat Vector
+### Extracting Chat Vector
 
-To extract the chat vector, use the following command:
-
-```bash
-BASE_MODEL_PATH=meta-llama/Meta-Llama-3-8B
-CHAT_MODEL_PATH=meta-llama/Meta-Llama-3-8B-Instruct
-CHAT_VECTOR_PATH=ckpt_tv/llama3-8b-instruct
-
-python extract_chat_vector.py $BASE_MODEL_PATH $CHAT_MODEL_PATH $CHAT_VECTOR_PATH
-```
-
-### Adding the Chat Vector
-
-To add the chat vector to the model, use the following command:
+* `extract_chat_vector.py` 파일을 참고
+* Instruction Chat Vector: `beomi/Llama-3-KoEn-8B-Instruct-preview` - `beomi/Llama-3-KoEn-8B`
+* Korean Chat Vector: `beomi/Llama-3-KoEn-8B` - `meta-llama/Meta-Llama-3-8B`
+* OpenBioLLM Chat Vector: `aaditya/Llama3-OpenBioLLM-8B` - `meta-llama/Meta-Llama-3-8B`
+* 각각의 Chat Vector를 얻기 위해서 미리 작성된 아래 스크립트를 실행
+* 별개의 Chat Vector가 필요할 경우 스크립트 수정을 통해 Chat Vector를 얻을 수 있음
 
 ```bash
-CP_MODEL_PATH=ckpt/llama3-8b_cp
-OUTPUT_PATH=ckpt/llama3-8b-cp_cv-llama3
-
-python add_chat_vector.py $CP_MODEL_PATH "['$CHAT_VECTOR_PATH']" $OUTPUT_PATH \
---ratio "[1]"  # chat vector ratio
+bash extract_IT.sh # Instruction Chat Vector
+bash extract_KO.sh # Korean Chat Vector
+bash extract_OB.sh # OpenBioLLM Chat Vector
 ```
 
-If you encounter issues with outputting the target language, please lower the `ratio` setting.
+### Adding Chat Vector
 
-### Skip Embedding
-
-In cases where you need to continue pretraining with extended word embeddings, you can use the `--skip_embed` option to avoid adding the embedding and `lm_head` layer:
+* `add_chat_vector.py` 파일을 참고
+* 2개 이상의 Chat Vector를 더해주는 경우, `--ratio` 옵션을 통해 조절 가능 (`add_KO+IT+OB.sh` 참고)
+* Korean Llama + OpenBioLLM: `beomi/Llama-3-KoEn-8B` + (`aaditya/Llama3-OpenBioLLM-8B` - `meta-llama/Meta-Llama-3-8B`)
+* Korean Llama + 0.5 Instruction + 0.5 OpenBioLLM: `beomi/Llama-3-KoEn-8B` + 0.5(`beomi/Llama-3-KoEn-8B-Instruct-preview` - `beomi/Llama-3-KoEn-8B`) + 0.5(`aaditya/Llama3-OpenBioLLM-8B` - `meta-llama/Meta-Llama-3-8B`)
+* OpenBioLLM + Korean Chat Vector: `aaditya/Llama3-OpenBioLLM-8B` + (`beomi/Llama-3-KoEn-8B` - `meta-llama/Meta-Llama-3-8B`)
+* 미리 작성된 아래 스크립트를 실행
+* 다른 조합 또는 비율이 필요할 경우 스크립트 수정을 통해 Chat Vector를 더한 모델을 얻을 수 있음
+* **[구글 드라이브 링크](https://drive.google.com/file/d/1JlfgftGWEeVXtokSIZsmThpMkYoD-kDG/view?usp=share_link)에서 미리 더해진 OpenBioLLM + Korean Chat Vector 모델을 다운로드 가능 (압축 해제 필요)**
 
 ```bash
-CP_MODEL_PATH=ckpt/llama3-8b_cp
-OUTPUT_PATH=ckpt/llama3-8b-cp_cv-llama3
-
-python add_chat_vector.py $CP_MODEL_PATH "['$CHAT_VECTOR_PATH']" $OUTPUT_PATH --skip_embed True
+bash add_KO+OB.sh # Korean Llama + OpenBioLLM
+bash add_KO+IT+OB.sh # Korean Llama + 0.5Instruction + 0.5OpenBioLLM
+bash add_OB+KO.sh # OpenBioLLM + Korean Chat Vector
 ```
-
-If certain special tokens in the chat template (such as `<|eot_id|>`) are not trained during continual pretraining, you should set `special_tokens_map` to replace the CP model's special tokens embedding with the chat model's tokens. For example, with `llama3`:
-
-```bash
-python add_chat_vector.py $CP_MODEL_PATH "['$CHAT_VECTOR_PATH']" $OUTPUT_PATH \
---ratio "[1]" \  # chat vector ratio
---skip_embed True \
---special_tokens_map "{128006:128006,128007:128007,128009:128009}"  # {'CP_MODEL_TOKEN_ID':'CHAT_MODEL_TOKEN_ID'}
-```
-
-If the model does not generate text properly, consider fine-tuning the model with the added chat vector.
-
-### Merging Multiple Chat Vectors
-
-To merge multiple chat vectors, use the following command:
-
-```bash
-OUTPUT_PATH=ckpt/llama3-8b-cp_cv-llama3-openhermess
-CV1_PATH=ckpt_tv/llama3-8b-instruct
-CV2_PATH=ckpt_tv/llama3-8b-openhermess
-
-python add_chat_vector.py $CP_MODEL_PATH "['$CV1_PATH','$CV2_PATH']" $OUTPUT_PATH \
---ratio "[0.5,0.5]"
-# Enable `--skip_embed` and `--special_tokens_map` if needed
-```
-
-* set `chat_template` to `$CV2_PATH`'s chat template.
 
 ## Chat Script
 
+* System Prompt: `chat.py` 파일을 참고하여 `SYS_PROMPT` 변수를 수정
+
 ```bash
-python chat.py \ 
-$OUTPUT_PATH \  # model path
-# --sys_prompt "你是一個樂於助人的助理。" \  # system prompt
-# --<other generation config>
+python chat.py \
+$MODEL_PATH \  # 만들어진 모델 경로 (예: ckpt/Llama-3-8B-OpenBioLLM-Korean)
 ```
 
-## Citation
+## Other Files
 
-If you find this paper helpful, please use the following citation:
-
-```bibtex
-@misc{huang2024chat,
-      title={Chat Vector: A Simple Approach to Equip LLMs with Instruction Following and Model Alignment in New Languages}, 
-      author={Shih-Cheng Huang* and Pin-Zu Li* and Yu-Chi Hsu and Kuang-Ming Chen and Yu Tung Lin and Shih-Kai Hsiao and Richard Tzong-Han Tsai and Hung-yi Lee*},
-      year={2024},
-      eprint={2310.04799},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL}
-}
-```
-
-## Acknowledgement
-
-We appreciate the support and resources provided by the TAIDE project.
+* `chat_exaone.ipynb`: EXAONE 모델을 활용한 대화 데모 및 예시 파일
+* `chat_llama.ipynb`: OpenBioLLM 모델을 활용한 대화 데모 및 예시 파일

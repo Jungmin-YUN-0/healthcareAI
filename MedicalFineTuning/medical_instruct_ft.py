@@ -8,7 +8,7 @@ from peft import LoraConfig, PeftModel
 from trl import SFTTrainer
 from huggingface_hub import notebook_login
 
-tokenizer = AutoTokenizer.from_pretrained('/home/juhwan/Workspace/rapa/ChatVector/ckpt/Llama-3-8B-OpenBioLLM-Korean')
+tokenizer = AutoTokenizer.from_pretrained('../ChatVector/ckpt/Llama-3-8B-OpenBioLLM-Korean')
 
 ### build instruction-prompt
 def generate_prompt(ds):
@@ -32,9 +32,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     ### model and dataset
     #parser.add_argument('--model_type', type=str, default='gemma-2b')
-    parser.add_argument('--base_model', type=str, default='/home/juhwan/Workspace/rapa/ChatVector/ckpt/Llama-3-8B-OpenBioLLM-Korean')
+    parser.add_argument('--base_model', type=str, default='../ChatVector/ckpt/Llama-3-8B-OpenBioLLM-Korean')
     parser.add_argument('--cache_dir', type=str, default='./')
-    parser.add_argument('--data_path', type=str, default='/home/juhwan/Workspace/rapa/korean_ft/KoAlpaca_v1.1_medical.jsonl')
+    parser.add_argument('--data_path', type=str, default='./KoAlpaca_v1.1_medical.jsonl')
     parser.add_argument('--test_ratio', type=float, default=0.1)
 
     ### PEFT
