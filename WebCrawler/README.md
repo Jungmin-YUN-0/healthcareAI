@@ -3,8 +3,8 @@
 - Note : KSD 데이터셋은 selenium으로 크롤링 / KDCA 데이터셋은 beautifulsoup4로 크롤링 
   
 ## 크롤링 가능 데이터셋 항목
-- MSD : (MSD 매뉴얼)[https://www.msdmanuals.com/ko-kr/home]
-- KDCA : (국가건강정보포털)[https://www.nhis.or.kr/nhis/healthin/retrieveDiseVltGnlSymp.do]
+- MSD : [MSD 매뉴얼](https://www.msdmanuals.com/ko-kr/home)
+- KDCA : [국가건강정보포털](https://www.nhis.or.kr/nhis/healthin/retrieveDiseVltGnlSymp.do)
 
 ## Usage - MSD
 1. 필요한 라이브러리를 설치
@@ -59,3 +59,6 @@ python run_KDCA.py
   
 모든 데이터는 해당 건강 정보에 대한 별도의 CSV 파일로 저장되며, 저장 경로는 각 정보의 상위 카테고리 이름으로 된 폴더 안에 저장됩니다.
 예를 들어, `진단 및 검사` 폴더 안에 `위내시경.csv` 형식으로 저장됩니다.
+
+
+<img width="529" alt="output_example" src="https://github.com/user-attachments/assets/ac32cde6-2207-4a20-ba40-0f59da0b504e">
