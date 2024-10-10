@@ -1,5 +1,5 @@
 # RAG(Retrieval Augmented Generation) + ChatGPT (Version 2)
-- Retireval DB : MSD, KDCA 크롤링 데이터셋
+- Retrieval DB : MSD, KDCA 크롤링 데이터셋
 
 ## Requirements
 * torch
@@ -20,7 +20,7 @@ pip install openai==0.28.0
 ## Usage
 * BM25+ChatGPT
 ```bash
-bash 1.run_bm24.sh
+bash 1.run_bm25.sh
 ```
 
 * DPR+ChatGPT
