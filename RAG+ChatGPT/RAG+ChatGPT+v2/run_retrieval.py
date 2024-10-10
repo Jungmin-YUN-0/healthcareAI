@@ -167,7 +167,7 @@ def main():
     for ret_result in ret_results:
         print(json.dumps(ret_result, ensure_ascii=False), file=fout)
 
-    logging.info(f"Process finished, output file saves at : {fout_path}")
+    logging.info(f"Process finished, output file saved at : {fout_path}")
 
 if __name__ == "__main__":
     main()
