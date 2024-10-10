@@ -17,6 +17,7 @@ pip install torch transformers tqdm jsonlines rank-bm25 kiwipiepy
 ```
 
 ## Usage
+**데이터셋이나 DPR 모델을 변경할 경우, Embedding을 새로 생성하여야합니다. (embedding path를 입력 받지 않을 경우 자동 생성)**
 * BM25
 ```bash
 bash 1.run_bm25.sh
