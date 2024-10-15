@@ -22,8 +22,14 @@ pip install openai==0.28.0
 ```bash
 bash 1.run_bm25.sh
 ```
+- tokenizer는 okt, kiwi를 지원
 
 * DPR+ChatGPT
 ```bash
 bash 2.run_dpr.sh
+```
+
+* Only ChatGPT
+```bash
+bash 3.run_chatgpt.sh
 ```

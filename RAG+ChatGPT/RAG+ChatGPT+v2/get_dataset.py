@@ -1,28 +1,14 @@
-import jsonlines
+import pandas as pd
 
-def get_corpus(file_path):
-
-    corpus = []
-    names = []
-    with jsonlines.open(file_path) as f:
-        for line in f.iter():
-            n = line['name']
-            c = line['text']
-            corpus.append(c)
-            names.append(n)
-    
-    return corpus, names
-
+def get_search_target_data(file_path):
+    df = pd.read_csv(file_path, encoding='cp949')
+    search_target = df['question'].tolist()
+    target_metadata = df.to_dict(orient='records')
+    return search_target, target_metadata 
 
 def get_queries(file_path):
-
     queries = []
-    names = []
-    with jsonlines.open(file_path) as f:
-        for line in f.iter():
-            n = line['name']
-            q = line['text']
-            queries.append(q)
-            names.append(n)
-    
-    return queries, names
+    with open(file_path, 'r', encoding='utf-8') as file:
+        for line in file:
+            queries.append(line.strip())
+    return queries

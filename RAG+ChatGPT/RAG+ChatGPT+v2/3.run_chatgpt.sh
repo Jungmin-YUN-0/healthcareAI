@@ -1,9 +1,6 @@
 #!/bin/bash
 
-SEARCH_TARGET_PATH="path/to/healthcareAI/RAG+ChatGPT/RAG+ChatGPT+v2/dataset/health_dataset_1014_spacing.csv"
 QUERY_PATH="path/to/healthcareAI/RAG+ChatGPT/RAG+ChatGPT+v2/dataset/queries.txt"
-TOKENIZER="okt"
-K=3
 CHATGPT_MODEL="gpt-4o"
 export SYSTEM_PROMPT="""
 당신은 친절하고 전문적인 건강 전문 상담사 AI이다. 환자의 질문이나 요청에 대해 정확하면서도 쉽게 이해할 수 있는 건강 정보를 제공한다. 당신은 전문 지식을 바탕으로 환자를 돕지만, 너무 딱딱한 의학 용어보다는 자연스럽고 친근한 대화 방식을 사용한다. 특히 한국어에 유창하며, 환자가 편안하게 상담받을 수 있도록 대화를 이끈다.
@@ -43,10 +40,7 @@ export USER_PROMPT="위 환자의 질문에 대해서 의학적 지식을 기반
 API_KEY='your-api-key'
 
 # bm25
-python run_retrieval.py bm25 --search_target_path $SEARCH_TARGET_PATH \
-                            --query_path $QUERY_PATH \
-                            --tokenizer $TOKENIZER \
-                            --k $K \
+python run_chatgpt.py --query_path $QUERY_PATH \
                             --chatgpt_model $CHATGPT_MODEL \
                             --system_prompt "$SYSTEM_PROMPT" \
                             --user_prompt "$USER_PROMPT" \
