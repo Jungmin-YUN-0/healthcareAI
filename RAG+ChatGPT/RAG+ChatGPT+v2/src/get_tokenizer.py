@@ -13,7 +13,7 @@ def kiwi_tokenizer(doc):
 
 def okt_tokenizer(doc):
         okt = Okt()
-        stopwords_path = os.getcwd()+'/dataset/stopwords-ko.txt'
+        stopwords_path = os.path.join(os.path.dirname(os.getcwd()), 'dataset', 'stopwords-ko.txt')
         with open(stopwords_path, 'r', encoding='utf-8') as file:
             stopwords = file.read().splitlines()
         okt_result = okt.morphs(doc)

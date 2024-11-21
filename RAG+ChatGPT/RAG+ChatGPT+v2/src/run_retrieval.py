@@ -139,7 +139,7 @@ def main():
 
             os.makedirs('dpr_embeddings', exist_ok=True)
             model_name = args.model_path.split('/')[-1]
-            args.embedding_path = f'{os.getcwd()}/dpr_embeddings/embedding.{model_name}.{args.max_length}.pt'
+            args.embedding_path = os.path.join(os.path.dirname(os.getcwd()), 'dpr_embeddings', f'embedding.{model_name}.{args.max_length}.pt')
             make_dpr_embedding(args.model_path, args.search_target_path, args.max_length, args.embedding_path)
 
         ret_results = run_dpr(args.search_target, args.queries, args.target_metadata, args.k, args.model_path, args.embedding_path, args.max_length)
@@ -149,9 +149,9 @@ def main():
 
     ret_results = get_RAG_chatgpt_multiple_responses(ret_results, args.chatgpt_model, args.system_prompt, args.user_prompt, args.api_key)
 
-    os.makedirs('outputs', exist_ok=True)
+    os.makedirs(os.path.join(os.path.dirname(os.getcwd()), 'outputs'), exist_ok=True)
     current_time = datetime.datetime.now().strftime('%m%d_%H%M%S')
-    fout_path = f'{os.getcwd()}/outputs/{args.mode}.{current_time}.jsonl'
+    fout_path = os.path.join(os.path.dirname(os.getcwd()), 'outputs', f'{args.mode}.{current_time}.jsonl')
     fout = open(fout_path, 'w')
     
     for ret_result in ret_results:

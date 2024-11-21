@@ -46,7 +46,7 @@ API_KEY='your-api-key'
 EMBEDDING_PATH="path/to/healthcareAI/RAG+ChatGPT/RAG+ChatGPT+v2/dpr_embeddings/embedding.KoE5.512.pt"
 
 # dpr
-python run_retrieval.py dpr --search_target_path $SEARCH_TARGET_PATH \
+python ../src/run_retrieval.py dpr --search_target_path $SEARCH_TARGET_PATH \
                             --query_path $QUERY_PATH \
                             --k $K \
                             --model_path $MODEL_PATH \
@@ -56,5 +56,4 @@ python run_retrieval.py dpr --search_target_path $SEARCH_TARGET_PATH \
                             --system_prompt "$SYSTEM_PROMPT" \
                             --user_prompt "$USER_PROMPT" \
                             --api_key $API_KEY
-
 

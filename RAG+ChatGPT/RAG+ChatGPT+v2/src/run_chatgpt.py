@@ -1,4 +1,4 @@
-from get_dataset import get_search_target_data, get_queries
+from get_dataset import get_queries
 from chatgpt import get_chatgpt_multiple_responses
 from tqdm import tqdm
 import argparse
@@ -28,9 +28,10 @@ def main():
 
     ret_results = get_chatgpt_multiple_responses(args.queries, args.chatgpt_model, args.system_prompt, args.user_prompt, args.api_key)
 
-    os.makedirs('outputs', exist_ok=True)
+    os.makedirs(os.path.join(os.path.dirname(os.getcwd()), 'outputs'), exist_ok=True)
     current_time = datetime.datetime.now().strftime('%m%d_%H%M%S')
-    fout_path = f'{os.getcwd()}/outputs/chatgpt.{current_time}.jsonl'
+
+    fout_path = os.path.join(os.path.dirname(os.getcwd()),'outputs', f'chatgpt.{current_time}.jsonl')
     fout = open(fout_path, 'w')
     
     for ret_result in ret_results:
