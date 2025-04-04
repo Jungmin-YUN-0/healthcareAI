@@ -33,7 +33,13 @@ Use the DPR-based retrieval mechanism by running:
 bash run_dpr.sh
 ```
 
-### 3. Only ChatGPT
+### 3. DPR+ChatGPT
+Use the DPR-based retrieval mechanism by running:
+```bash
+bash run_dpr.sh
+```
+
+### 4. Only ChatGPT
 If retrieval is not required, directly invoke ChatGPT:
 ```bash
 bash run_chatgpt.sh
@@ -47,10 +53,10 @@ This section provides details about the key configurations required to run the s
 - `QUERY_PATH`: Path to the query file (list of questions).   
 
 ### 2. Retriever Settings:
-- `K`: Define the number of top search results to return. Default is 3.   
 1) BM25   
-- `TOKENIZER`: Select tokenizer (`okt` or `kiwi`).
-2) DPR   
+- `K`: Define the number of top search results to return. Default is 3.   
+2) DPR
+- `K`: Define the number of top search results to return. Default is 3.   
 - `EMBEDDING_PATH`: Provide the path to the precomputed embedding file for DPR retrieval. If the file is missing, it will be **automatically generated**.
 - `MODEL_PATH`: Specify the model path for DPR. For Korean text, models like `KoE5` are recommended.   
 - `MAX_LENGTH`: Set the maximum input token length for embedding generation. Default is 512.   
@@ -110,24 +116,26 @@ This section provides details about the key configurations required to run the s
 │   └── stopwords-ko.txt              # Stopwords dataset for tokenizer
 │
 ├── dpr_embeddings/                          
-│   └── embedding.KoE5.512.pt         # embedding file example
+│   └── embedding.ko-sroberta-multitask.512.pt         # embedding file example
 │
 ├── scripts/                          # Shell scripts for execution
 │   ├── run_bm25.sh                   # BM25-based retrieval + ChatGPT
 │   ├── run_dpr.sh                    # DPR-based retrieval + ChatGPT
+│   ├── run_hybrid.sh                 # Hybrid retrieval + ChatGPT
 │   └── run_chatgpt.sh                # ChatGPT-only execution
 │
 ├── src/                              # Source code for retrieval and generation
 │   ├── run_retrieval.py              # Main script for retrieval (BM25/DPR) + ChatGPT
 │   ├── run_chatgpt.py                # Main script for ChatGPT-only execution
 │   ├── get_dataset.py                # Dataset loading utilities
-│   ├── get_tokenizer.py              # Tokenizer utilities
+│   ├── get_retriever.py              # Retriever loading utilities
 │   └── chatgpt.py                    # ChatGPT interaction module
 │
 └── outputs/                          # Output directory for results
-│   ├── bm25.1121_175850.jsonl        # Output file example (BM25-based retrieval + ChatGPT) 
-│   ├── chatgpt.1121_180720.jsonl     # Output file example (ChatGPT-only execution)
-│   └── dpr.1121_180444.jsonl         # Output file example (DPR-based retrieval + ChatGPT)
+│   ├── bm25.0404_081130.jsonl        # Output file example (BM25-based retrieval + ChatGPT) 
+│   ├── chatgpt.0404_083026.jsonl     # Output file example (ChatGPT-only execution)
+│   ├── chatgpt.0404_083026.jsonl     # Output file example (ChatGPT-only execution)
+│   └── hybrid.0404_075803.jsonl      # Output file example (DPR-based retrieval + ChatGPT)
 │
 └── README.md
 ```
