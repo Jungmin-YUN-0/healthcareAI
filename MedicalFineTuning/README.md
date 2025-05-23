@@ -35,24 +35,62 @@ python script.py --data_path './KoAlpaca_v1.1_medical.jsonl' --base_model '../Ch
 ## <RAPA 인수인계>
 -	모든 폴더는 /nas_homes/projects/rapa에 위치.
 
+-	
+# 📁 프로젝트 폴더 구조 안내
 
--	폴더 별 설명
-```bash
-1)	Chatvector
--	Chatvector 모델 위치 (생성 방법 Github 참조)
-2)	Dataset 
-- A.	Blossom (blossom Fine-tuning 용)
-- B.	Data_updated  = 의료 증강 데이터; PPT 참조 (서울대 + 기존 데이터)
-- C.	Data_update_512 : 512 이를 512토큰 자름
+본 저장소의 주요 폴더 및 파일 구조에 대한 설명입니다. 각 폴더는 모델 학습, 데이터셋 관리, 결과 확인 등을 위해 구성되어 있습니다.
 
-3)	Results : 이때까지 한 모들 결과
-- A.	BERT Score, BLEU 등등… -> CoT는 steering vector (https://github.com/Marker-Inc-    Korea/COT_steering/tree/main)
+---
 
-4)	Code
-- A.	Data_checker : 정민님이 주신 데이터 전처리 (위의 data_updated로 이미 완료되어짐)
-- B.	LoRA_first.py : Openbiollm 모델 학습
-        Exaone.py : Exaone 모델 학습 코드 (생성한 모델은 용량 문제로 제거, 학습 필요)
-- C.	Ds_confing.json : Deepspeed 코드
-- D.	Generation1.ipynb : 실제 텍스트 생성 코드
-- E.	나머지 폴더는 권한이 없어 제거하지 못함
-```
+## 1. `Chatvector/`
+Chatvector 관련 모델 파일이 위치한 디렉토리입니다.  
+- Chatvector 모델 저장  
+- 생성 방법은 [공식 GitHub 저장소](https://github.com/Marker-Inc-Korea/COT_steering/tree/main) 참고
+
+---
+
+## 2. `Dataset/`
+모델 학습 및 파인튜닝에 사용되는 데이터셋들이 포함된 디렉토리입니다.
+
+- **`Blossom/`**  
+  Blossom 모델 파인튜닝용 데이터셋
+
+- **`Data_updated/`**  
+  의료 증강 데이터셋 (서울대학교 + 기존 데이터 혼합)  
+  ※ 상세한 내용은 내부 PPT 참고
+
+- **`Data_update_512/`**  
+  `Data_updated` 데이터를 512 토큰 단위로 분할한 버전
+
+---
+
+## 3. `Results/`
+지금까지 진행된 모델 실험 결과를 저장하는 디렉토리입니다.
+
+- BERT Score, BLEU 등 다양한 평가 지표 포함  
+- CoT (Chain-of-Thought) 결과는 [Steering Vector 저장소](https://github.com/Marker-Inc-Korea/COT_steering/tree/main) 참고
+
+---
+
+## 4. `Code/`
+데이터 전처리, 모델 학습 및 텍스트 생성 등에 관련된 코드가 포함되어 있습니다.
+
+- **`Data_checker/`**  
+  정민님이 제공한 데이터 전처리 코드  
+  (`Data_updated`에 이미 반영 완료)
+
+- **`LoRA_first.py`**  
+  OpenBioLLM 모델 학습 코드
+
+- **`Exaone.py`**  
+  Exaone 모델 학습 코드  
+  ※ 모델 파일은 용량 문제로 삭제됨 → 재학습 필요
+
+- **`ds_config.json`**  
+  Deepspeed 설정 파일
+
+- **`Generation1.ipynb`**  
+  실제 텍스트 생성 코드
+
+- **기타 폴더**  
+  권한 문제로 인해 제거하지 못한 폴더 일부 존재
