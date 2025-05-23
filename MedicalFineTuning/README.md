@@ -94,3 +94,25 @@ Chatvector 관련 모델 파일이 위치한 디렉토리입니다.
 
 - **기타 폴더**  
   권한 문제로 인해 제거하지 못한 폴더 일부 존재
+
+
+## Generation 결과표
+
+### 🧾 Dialogue Generation Task Evaluation Results
+
+| Model | RoBERTaScore | BERTScore | BLEU | ROUGE-1 | ROUGE-2 | ROUGE-L | METEOR |
+|-------|--------------|-----------|------|----------|----------|----------|--------|
+| OpenBiollm | – | 0.0223 | 0.0017 | 0.0015 | 0.0004 | 0.0015 | 0.0048 |
+| OpenBiollm + chatvector | 0.5571 | 0.0570 | 0.0954 | 0.0493 | 0.0903 | 0.0903 | 0.2267 |
+| LGAI-EXAONE-7.8B (instruct) | 0.7480 | 0.5994 | 0.0579 | 0.1888 | 0.0918 | 0.1757 | 0.2619 |
+| Qwen 2.5 7B Vanilla | 0.7391 | 0.5665 | 0.0724 | 0.1388 | 0.0767 | 0.1341 | 0.2354 |
+| yanolja/EEVE-Korean-10.8B-v1.0 | 0.7637 | 0.6238 | 0.0623 | 0.1772 | 0.1010 | 0.1682 | 0.2397 |
+| OpenBioLLM + chatvector + AdaLoRA (Instruct) | 0.5567 | 0.0571 | 0.0958 | 0.0501 | 0.0907 | 0.2265 | 0.2265 |
+| OpenBioLLM + chatvector + LoRA (Instruct) | 0.7397 | 0.5923 | 0.0742 | 0.1505 | 0.0906 | 0.1449 | 0.2306 |
+| OpenBioLLM + chatvector + LoRA (Instruct) + CoT (k=4) | 0.7629 | 0.6186 | 0.0795 | 0.1938 | 0.1104 | 0.1833 | 0.2985 |
+| OpenBioLLM + chatvector + LoRA (Instruct) + CoT (k=10) | 0.7602 | 0.6153 | 0.0782 | 0.1922 | 0.1070 | 0.1813 | 0.2955 |
+| Qwen 2.5 7B Instruct | – | 0.5984 | 0.0808 | 0.1782 | 0.0959 | 0.1688 | 0.2741 |
+| Qwen 2.5 7B Vanilla | 0.7391 | 0.5665 | 0.0724 | 0.1388 | 0.0767 | 0.1341 | 0.2354 |
+
+> `–` indicates missing RoBERTaScore values for that model.
+
