@@ -401,6 +401,6 @@ df_score.columns = ['BERTscore']
 # %%
 df_total = pd.concat([df_score, df_all], axis = 0)
 
-df_total.to_csv(f'/nas_homes/projects/rapa/Result/{model_name}_Dialogue_Generation_Results.csv', encoding = 'utf-8-sig')
+df_total.to_csv(f'/nas_homes/projects/rapa/Result/{model_name}_Dialogue_Generation_Blocking_Results.csv', encoding = 'utf-8-sig')
 
 
