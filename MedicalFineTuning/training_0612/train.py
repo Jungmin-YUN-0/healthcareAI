@@ -1,11 +1,11 @@
 import argparse
-import torch
 import os
 import re
+import torch
 from datasets import load_from_disk
 from transformers import (
-    BitsAndBytesConfig, 
-    AutoModelForCausalLM, 
+    BitsAndBytesConfig,
+    AutoModelForCausalLM,
     AutoTokenizer,
     TrainingArguments,
     Trainer,
@@ -18,6 +18,9 @@ from accelerate import Accelerator
 os.environ['TOKENIZERS_PARALLELISM'] = 'false'
 
 def str2bool(v):
+    """
+    argparse에서 bool 타입 인자를 처리하기 위한 함수
+    """
     if isinstance(v, bool):
         return v
     if v.lower() in ('yes', 'true', 't', 'y', '1'):
@@ -29,7 +32,7 @@ def str2bool(v):
 
 def prompt_generate(example):
     """
-    데이터셋을 프롬프트 형태로 변환하는 함수
+    데이터셋의 input/output을 프롬프트 형태의 text로 변환
     """
     input_text = example['input']
     output_text = example['output']
@@ -40,8 +43,8 @@ def prompt_generate(example):
 
 def tokenize_function(examples, tokenizer, max_length):
     """
-    텍스트를 토크나이징하고 프롬프트 부분을 마스킹하는 함수
-    미리 패딩까지 처리하여 완전한 형태로 반환
+    프롬프트 텍스트를 토크나이즈하고,
+    프롬프트(질문) 부분을 -100으로 마스킹하여 라벨 생성
     """
     # 전체 텍스트 토크나이징 (패딩 포함)
     tokenized = tokenizer(
@@ -92,26 +95,34 @@ def tokenize_function(examples, tokenizer, max_length):
     return tokenized
 
 def main():
+    """
+    학습 전체 파이프라인 실행 함수
+    - 데이터셋 로드 및 전처리
+    - 모델 및 토크나이저 로드
+    - LoRA/QLoRA 설정 및 적용
+    - Trainer를 통한 학습 및 체크포인트 관리
+    - 어댑터 및 토크나이저 저장
+    """
     parser = argparse.ArgumentParser()
-    
-    # Model arguments
+    # -------------------- 인자 정의 --------------------
+    # 모델 및 데이터 경로 인자
     parser.add_argument("--base_model_name", type=str, default="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B")
     parser.add_argument("--save_path", type=str, default="/home/project/rapa/final_model")
     parser.add_argument("--checkpoint_path", type=str, default="/home/project/rapa/checkpoint")
     parser.add_argument("--data_path", type=str, default="/home/project/rapa/dataset/dataset_fintuning_0603")
     
-    # Deepspeed arguments
+    # Deepspeed 관련 인자
     parser.add_argument("--deepspeed_config_path", type=str, default='./ds_config')
     parser.add_argument("--use_deepspeed", type=bool, default=False)
     parser.add_argument("--local_rank", type=int, default=-1)
     
-    # Training arguments - LoRA & QLoRA
+    # LoRA/QLoRA 관련 인자
     parser.add_argument("--lora_rank", type=int, default=16)
     parser.add_argument("--lora_alpha", type=int, default=32)
     parser.add_argument("--lora_dropout", type=float, default=0.05)
     parser.add_argument("--use_qlora", type=str2bool, default=True)
     
-    # Training arguments - Hyperparameters
+    # 학습 하이퍼파라미터
     parser.add_argument('--job', type=str, default='training', choices=['training', 'resume_training'])
     parser.add_argument("--learning_rate", type=float, default=5e-6)
     parser.add_argument("--adam_beta1", type=float, default=0.9)
@@ -127,30 +138,32 @@ def main():
     parser.add_argument("--max_steps", type=int, default=-1)
     parser.add_argument("--save_steps", type=int, default=500)
     
-    # Training arguments - Generation length
+    # 학습 길이 관련 인자
     parser.add_argument("--max_length", type=int, default=512)
     
-    # Other arguments
+    # 기타 인자
     parser.add_argument("--random_seed", type=int, default=42)
     parser.add_argument("--torch_dtype_bf16", type=str2bool, default=True)
     parser.add_argument("--use_gradient_checkpointing", type=str2bool, default=True)
     
     args = parser.parse_args()
     
+    # WANDB 설정
     os.environ["WANDB_PROJECT"] = 'RAPA'
     os.environ["WANDB_DISABLED"] = "false"
     
-    # Set random seed
+    # 랜덤 시드 고정
     torch.manual_seed(args.random_seed)
     if args.use_deepspeed:
         local_rank = int(os.environ.get("LOCAL_RANK", 0))
         torch.cuda.set_device(local_rank)
         device = torch.device(f"cuda:{local_rank}")
-    # Load dataset
+
+    # -------------------- 데이터셋 로드 및 전처리 --------------------
     dataset = load_from_disk(args.data_path)
     train_dataset = dataset['train']
     
-    # 데이터셋을 프롬프트 형태로 변환
+    # 프롬프트 형태로 변환
     train_dataset = train_dataset.map(
         prompt_generate, 
         remove_columns=['input', 'output', 'source'],
@@ -158,7 +171,7 @@ def main():
         load_from_cache_file=False
     )
     
-    # Configure quantization if using QLoRA
+    # -------------------- 토크나이저 및 모델 로드 --------------------
     quantization_config = None
     if args.use_qlora:
         quantization_config = BitsAndBytesConfig(
@@ -168,19 +181,16 @@ def main():
             bnb_4bit_quant_type="nf4"
         )
     
-    # Load model and tokenizer based on model name
     model_path = args.base_model_name
     
-    # Load tokenizer
     tokenizer = AutoTokenizer.from_pretrained(
         model_path,
         trust_remote_code=True
     )
-    
     if (tokenizer.pad_token is None) and (tokenizer.eos_token is not None):
         tokenizer.pad_token = tokenizer.eos_token
     
-    # 토크나이징 적용
+    # 토크나이징 및 라벨 마스킹
     train_dataset = train_dataset.map(
         lambda examples: tokenize_function(examples, tokenizer, args.max_length),
         batched=True,
@@ -190,7 +200,7 @@ def main():
         desc="토크나이징 및 라벨 마스킹"
     )
     
-    # Load model
+    # 모델 로드
     model = AutoModelForCausalLM.from_pretrained(
         model_path,
         quantization_config=quantization_config if args.use_qlora else None,
@@ -198,14 +208,13 @@ def main():
         trust_remote_code=True,    
     )
 
-    # Prepare model for training
+    # -------------------- LoRA/QLoRA 적용 --------------------
     if args.use_gradient_checkpointing:
         model.gradient_checkpointing_enable()
 
     if args.use_qlora:
         model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=args.use_gradient_checkpointing)
     
-    # Configure LoRA
     lora_config = LoraConfig(
         r=args.lora_rank,
         lora_alpha=args.lora_alpha,
@@ -214,19 +223,17 @@ def main():
         bias="none",
         task_type="CAUSAL_LM"
     )
-    
-    # Apply LoRA to model
     model = get_peft_model(model, lora_config)
     model.print_trainable_parameters()
     
-    # 일반적인 DataCollator 사용 (MLM=False로 설정하여 causal LM용으로)
+    # -------------------- Trainer 및 학습 --------------------
     data_collator = DataCollatorForLanguageModeling(
         tokenizer=tokenizer,
         mlm=False,
         pad_to_multiple_of=8,
     )
     
-    # Generate run name based on model and LoRA type
+    # 러닝 이름 및 체크포인트 경로 설정
     model_short_name = args.base_model_name
     if '/home' in model_short_name:
         model_short_name = model_short_name.split('/')[-1] 
@@ -241,8 +248,8 @@ def main():
         ds_config = f'{args.deepspeed_config_path}_stage3.json'
         checkpoint_path = f'{args.checkpoint_path}/{model_short_name}/lora'
     
-    # Training arguments
     training_args = TrainingArguments(
+        max_steps=10,
         output_dir=checkpoint_path,
         num_train_epochs=args.num_epochs,
         per_device_train_batch_size=args.per_device_train_batch_size,
@@ -258,21 +265,20 @@ def main():
         do_train=True,
         deepspeed=ds_config if args.use_deepspeed else None,
     )
-    # Initialize trainer
+    
     trainer = Trainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset,
         tokenizer=tokenizer,
-        data_collator=data_collator,  # 일반적인 collator 사용
+        data_collator=data_collator,
     )
     
-    # Start training
+    # -------------------- 학습 시작 및 체크포인트 관리 --------------------
     if args.job == 'resume_training':
         checkpoint_root = checkpoint_path
 
         if os.path.exists(checkpoint_root):
-            # checkpoint-* 디렉토리들 중에서 숫자 가장 큰 거 찾기
             checkpoint_dirs = [d for d in os.listdir(checkpoint_root) if re.match(r'checkpoint-\d+', d)]
             if checkpoint_dirs:
                 latest_checkpoint = max(
@@ -292,18 +298,15 @@ def main():
         trainer.train()
     print('Train Finish')
     
+    # -------------------- 어댑터 및 토크나이저 저장 --------------------
     save_path = f'{args.save_path}/{model_short_name}'
     
-    # Save LoRA adapters
     if save_path:
-        # use_qlora 값에 따라 저장 경로 설정
         adapter_suffix = "qlora_adapters" if args.use_qlora else "lora_adapters"
         adapter_output_dir = f"{save_path}/{args.num_epochs}/{adapter_suffix}"
-        # 1. 어댑터만 저장 (작은 용량)
         trainer.save_model(adapter_output_dir)
         tokenizer.save_pretrained(adapter_output_dir)
         print(f"어댑터와 토크나이저가 {adapter_output_dir}에 저장되었습니다.")
 
- 
 if __name__ == "__main__":
     main()
