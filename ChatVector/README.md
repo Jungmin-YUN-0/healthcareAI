@@ -41,7 +41,6 @@ bash extract_OB.sh # OpenBioLLM Chat Vector
 * OpenBioLLM + Korean Chat Vector: `aaditya/Llama3-OpenBioLLM-8B` + (`beomi/Llama-3-KoEn-8B` - `meta-llama/Meta-Llama-3-8B`)
 * 미리 작성된 아래 스크립트를 실행
 * 다른 조합 또는 비율이 필요할 경우 스크립트 수정을 통해 Chat Vector를 더한 모델을 얻을 수 있음
-* **[구글 드라이브 링크](https://drive.google.com/file/d/1JlfgftGWEeVXtokSIZsmThpMkYoD-kDG/view?usp=share_link)에서 미리 더해진 OpenBioLLM + Korean Chat Vector 모델을 다운로드 가능 (압축 해제 필요)**
 
 ```bash
 bash add_KO+OB.sh # Korean Llama + OpenBioLLM
