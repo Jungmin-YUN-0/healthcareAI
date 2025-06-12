@@ -33,6 +33,7 @@ def str2bool(v):
 def prompt_generate(example):
     """
     데이터셋의 input/output을 프롬프트 형태의 text로 변환
+    원하는 프롬프트 형태로 변형 가능
     """
     input_text = example['input']
     output_text = example['output']
