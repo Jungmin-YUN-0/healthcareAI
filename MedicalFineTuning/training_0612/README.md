@@ -1,3 +1,4 @@
+"""
 # LLM Fine-tuning with LoRA/QLoRA
 
 대형 언어 모델(LLM) 파인튜닝을 위한 LoRA/QLoRA 기반 훈련 스크립트입니다.
@@ -39,7 +40,7 @@ pip install torch transformers datasets peft accelerate deepspeed bitsandbytes w
 
 ### 1. 설정 수정
 
-`run.sh`에서 경로와 하이퍼파라미터를 수정하세요:
+`shell_script.sh`에서 경로와 하이퍼파라미터를 수정하세요:
 
 ```bash
 # 모델 및 데이터 경로
@@ -63,6 +64,27 @@ chmod +x run.sh
 ./run.sh
 ```
 
+`shell_script.sh` 또는 `run.sh` 내부에서 `train.py`가 호출되며, 아래 기능을 수행합니다:
+
+#### 🔹 `train.py`: 파인튜닝 실행 스크립트
+
+- Hugging Face의 `transformers` 및 `peft` 라이브러리를 기반으로 LoRA/QLoRA 파인튜닝
+- `Trainer` 또는 `SFTTrainer` 사용
+- QLoRA 사용 시 4bit 양자화 적용
+- `wandb` 연동을 통한 로깅 지원
+
+```bash
+python train.py \
+    --base_model "/path/to/base_model" \
+    --dataset_path "/path/to/dataset" \
+    --output_dir "/path/to/save/output" \
+    --use_qlora True \
+    --num_epochs 3 \
+    --lora_r 16 \
+    --lora_alpha 32 \
+    --learning_rate 1e-4
+```
+
 ---
 
 ### 3. 훈련 재시작 (옵션)
@@ -72,6 +94,24 @@ chmod +x run.sh
 ```bash
 # run.sh에서 JOB 변수 수정
 JOB="training"
+```
+
+---
+
+## 🔗 모델 병합 및 추론 준비
+
+훈련이 완료된 후 어댑터 모델을 베이스 모델과 병합하여 추론 최적화 모델을 생성할 수 있습니다.
+
+#### 🔹 `model_merge.py`: LoRA 어댑터 병합 스크립트
+
+- LoRA/QLoRA 어댑터를 base model에 병합
+- 최종 모델을 Hugging Face 호환 포맷으로 저장
+
+```bash
+python model_merge.py \
+    --base_model "/path/to/base_model" \
+    --adapter_model "/path/to/adapter" \
+    --output_dir "/path/to/merged_model"
 ```
 
 ---
@@ -98,7 +138,7 @@ JOB="training"
 
 ## 📊 모니터링
 
-훈련 진행 상황은 **Weights & Biases (wandb)** 로 모니터링됩니다:
+훈련 진행 상황은 **Weights & Biases (wandb)**로 모니터링됩니다:
 
 - **프로젝트명**: `RAPA`  
 - **실행명**: `{모델명}_{LoRA유형}`  
@@ -114,3 +154,4 @@ final_model/
 │       ├── qlora_adapters/  # QLoRA 어댑터
 │       └── lora_adapters/   # LoRA 어댑터
 ```
+"""
