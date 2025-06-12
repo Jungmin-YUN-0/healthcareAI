@@ -17,38 +17,30 @@ pip install transformers fire
 
 ## Usage
 
-### Extracting Chat Vector
+### `extract_chat_vector.py`
 
-* `extract_chat_vector.py` 파일을 참고
-* Instruction Chat Vector: `beomi/Llama-3-KoEn-8B-Instruct-preview` - `beomi/Llama-3-KoEn-8B`
-* Korean Chat Vector: `beomi/Llama-3-KoEn-8B` - `meta-llama/Meta-Llama-3-8B`
-* OpenBioLLM Chat Vector: `aaditya/Llama3-OpenBioLLM-8B` - `meta-llama/Meta-Llama-3-8B`
-* 각각의 Chat Vector를 얻기 위해서 미리 작성된 아래 스크립트를 실행
-* 별개의 Chat Vector가 필요할 경우 스크립트 수정을 통해 Chat Vector를 얻을 수 있음
+*  파일을 참고
+* Korean Chat Vector: KoLLM - base LLM (e.g. `beomi/Llama-3-KoEn-8B` - `meta-llama/Meta-Llama-3-8B`)
+* OpenBioLLM Chat Vector: Medical LLM - base LLM (e.g. `aaditya/Llama3-OpenBioLLM-8B` - `meta-llama/Meta-Llama-3-8B`)
 
 ```bash
-bash extract_IT.sh # Instruction Chat Vector
 bash extract_KO.sh # Korean Chat Vector
-bash extract_OB.sh # OpenBioLLM Chat Vector
+bash extract_OB.sh # Medical Chat Vector
 ```
 
-### Adding Chat Vector
+### `add_chat_vector.py`
 
-* `add_chat_vector.py` 파일을 참고
-* 2개 이상의 Chat Vector를 더해주는 경우, `--ratio` 옵션을 통해 조절 가능 (`add_KO+IT+OB.sh` 참고)
-* Korean Llama + OpenBioLLM: `beomi/Llama-3-KoEn-8B` + (`aaditya/Llama3-OpenBioLLM-8B` - `meta-llama/Meta-Llama-3-8B`)
-* Korean Llama + 0.5 Instruction + 0.5 OpenBioLLM: `beomi/Llama-3-KoEn-8B` + 0.5(`beomi/Llama-3-KoEn-8B-Instruct-preview` - `beomi/Llama-3-KoEn-8B`) + 0.5(`aaditya/Llama3-OpenBioLLM-8B` - `meta-llama/Meta-Llama-3-8B`)
-* OpenBioLLM + Korean Chat Vector: `aaditya/Llama3-OpenBioLLM-8B` + (`beomi/Llama-3-KoEn-8B` - `meta-llama/Meta-Llama-3-8B`)
-* 미리 작성된 아래 스크립트를 실행
-* 다른 조합 또는 비율이 필요할 경우 스크립트 수정을 통해 Chat Vector를 더한 모델을 얻을 수 있음
+* 2개 이상의 Chat Vector를 더해주는 경우, `--ratio` 옵션을 통해 조절 가능
+* KoLLM + Medical Chat Vector (e.g. `beomi/Llama-3-KoEn-8B` + (`aaditya/Llama3-OpenBioLLM-8B` - `meta-llama/Meta-Llama-3-8B`))
+* Medical LLM + Korean Chat Vector (e.g. `aaditya/Llama3-OpenBioLLM-8B` + (`beomi/Llama-3-KoEn-8B` - `meta-llama/Meta-Llama-3-8B`))
+* 다른 조합 및 비율 설정 가능
 
 ```bash
-bash add_KO+OB.sh # Korean Llama + OpenBioLLM
-bash add_KO+IT+OB.sh # Korean Llama + 0.5Instruction + 0.5OpenBioLLM
-bash add_OB+KO.sh # OpenBioLLM + Korean Chat Vector
+bash add_KO+OB.sh
+bash add_OB+KO.sh
 ```
 
-## Chat Script
+## `chat.py`
 
 * System Prompt: `chat.py` 파일을 참고하여 `SYS_PROMPT` 변수를 수정
 
@@ -59,5 +51,4 @@ $MODEL_PATH \  # 만들어진 모델 경로 (예: ckpt/Llama-3-8B-OpenBioLLM-Kor
 
 ## Other Files
 
-* `chat_exaone.ipynb`: EXAONE 모델을 활용한 대화 데모 및 예시 파일
 * `chat_llama.ipynb`: OpenBioLLM 모델을 활용한 대화 데모 및 예시 파일
