@@ -6,7 +6,7 @@ RESULT_PATH="/home/jungmin/workspace/project/rapa/result/qa"
 MODEL_NAME="yanolja/EEVE-Korean-Instruct-10.8B-v1.0"
 CACHE_DIR="/home/project/rapa/final_model/eeve_chatvector_OB_update/1/lora_merged"
 
-CUDA_VISIBLE_DEVICES=3 python qa_eval_sc.py \
+python qa_eval_sc.py \
     --data_path "$DATA_PATH" \
     --model_name "$MODEL_NAME" \
     --cache_dir "$CACHE_DIR" \
