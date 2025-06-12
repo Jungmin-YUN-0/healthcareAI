@@ -39,7 +39,7 @@ pip install torch transformers datasets peft accelerate deepspeed bitsandbytes w
 
 ### 1. 설정 수정
 
-`shell_script.sh`에서 경로와 하이퍼파라미터를 수정하세요:
+`run.sh`에서 경로와 하이퍼파라미터를 수정하세요:
 
 ```bash
 # 모델 및 데이터 경로
