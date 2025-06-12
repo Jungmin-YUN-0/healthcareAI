@@ -40,7 +40,7 @@ pip install torch transformers datasets peft accelerate deepspeed bitsandbytes w
 
 ### 1. 설정 수정
 
-`shell_script.sh`에서 경로와 하이퍼파라미터를 수정하세요:
+`run.sh`에서 경로와 하이퍼파라미터를 수정하세요:
 
 ```bash
 # 모델 및 데이터 경로
@@ -64,7 +64,7 @@ chmod +x run.sh
 ./run.sh
 ```
 
-`shell_script.sh` 또는 `run.sh` 내부에서 `train.py`가 호출되며, 아래 기능을 수행합니다:
+`run.sh` 내부에서 `train.py`가 호출되며, 아래 기능을 수행합니다:
 
 #### 🔹 `train.py`: 파인튜닝 실행 스크립트
 
@@ -93,7 +93,7 @@ python train.py \
 
 ```bash
 # run.sh에서 JOB 변수 수정
-JOB="training"
+JOB="resume_training"
 ```
 
 ---
@@ -138,7 +138,7 @@ python model_merge.py \
 
 ## 📊 모니터링
 
-훈련 진행 상황은 **Weights & Biases (wandb)**로 모니터링됩니다:
+훈련 진행 상황은 **Weights & Biases (wandb)** 로 모니터링됩니다:
 
 - **프로젝트명**: `RAPA`  
 - **실행명**: `{모델명}_{LoRA유형}`  
@@ -152,6 +152,9 @@ final_model/
 ├── {model_name}/
 │   └── {num_epochs}/
 │       ├── qlora_adapters/  # QLoRA 어댑터
+│       └── qlora_merged/   # QLoRA 병합된 모델
 │       └── lora_adapters/   # LoRA 어댑터
+│       └── lora_merged/   # LoRA 병합된 모델
+
 ```
 """
