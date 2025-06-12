@@ -42,8 +42,6 @@ def main(args):
     torch._dynamo.config.suppress_errors = True
 
     dataset = load_from_disk(args.data_path)
-    # dataset = dataset.shuffle(seed=42).select(range(2)) #############
-    # dataset 
     question = dataset['question']
     answer = dataset['answer']
 
