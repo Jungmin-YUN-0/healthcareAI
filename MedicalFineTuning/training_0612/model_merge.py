@@ -79,7 +79,6 @@ def main():
     # Load tokenizer
     tokenizer = AutoTokenizer.from_pretrained(
         model_path,
-        cache_dir=args.cache_path,
         trust_remote_code=True
     )
     tokenizer.save_pretrained(merged_output_dir)
