@@ -1,4 +1,3 @@
-"""
 # LLM Fine-tuning with LoRA/QLoRA
 
 대형 언어 모델(LLM) 파인튜닝을 위한 LoRA/QLoRA 기반 훈련 스크립트입니다.
@@ -157,4 +156,3 @@ final_model/
 │       └── lora_merged/   # LoRA 병합된 모델
 
 ```
-"""
