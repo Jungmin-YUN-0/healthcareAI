@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # OpenAI API Key 설정 (사용하기 전에 실제 키로 변경하세요)
-export OPENAI_API_KEY="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"
+export OPENAI_API_KEY=""
 
 # RESULT_PATH 설정
 RESULT_PATH="./result"
