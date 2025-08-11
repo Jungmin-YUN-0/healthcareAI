@@ -1,7 +1,7 @@
 ## Directory Layout
 ```bash
 project/
-├─ generate.bash
+├─ generate.sh
 ├─ augment_summary.py
 ├─ augment_dialogue.py
 ├─ .env
