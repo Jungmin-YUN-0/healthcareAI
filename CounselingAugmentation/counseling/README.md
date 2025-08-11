@@ -41,7 +41,7 @@ bash generate.sh
 
 ## Arguments
 
-### augment_summary.py
+*augment_summary.py*
 
 - `--example_path`: 예시 데이터 경로
 
@@ -54,7 +54,7 @@ bash generate.sh
     - 1: one-shot (예시 각 파일로 별도 호출)
     - 2: few-shot (예시 2개 조합)
 
-### augment_dialogue.py
+*augment_dialogue.py*
 - `--example_path`: 예시 데이터 경로
 
 - `--input_path`: augment_summary.py 결과 디렉토리
