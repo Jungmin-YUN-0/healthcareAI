@@ -1,4 +1,4 @@
-## Directory Layout
+## Layout
 ```bash
 project/
 ├─ generate.sh
