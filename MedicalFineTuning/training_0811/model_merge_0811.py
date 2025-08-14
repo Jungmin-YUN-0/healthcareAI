@@ -120,14 +120,6 @@ def main():
     
     # from huggingface_hub import create_repo   # 선택 - 이미 repo 있으면 생략
 
-    # REPO_ID = "healthcareLLM_v3"
-    # HF_TOKEN = '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'
-    # # (2) 리포지토리(처음이면) 생성 ─ 이미 있다면 건너뛰어도 OK
-    # create_repo(repo_id=REPO_ID, repo_type="model", exist_ok=True, token=HF_TOKEN)
-
-    # # (3) Hugging Face Hub에 업로드
-    # model.push_to_hub(     REPO_ID, use_auth_token=HF_TOKEN)
-    # tokenizer.push_to_hub( REPO_ID, use_auth_token=HF_TOKEN)
     print(f"✅ 완료: {merged_output_dir}")
     
 if __name__ == "__main__":
